@@ -1,0 +1,101 @@
+import java.util.*;
+import java.time.*;
+
+class Reminder {
+    private LocalDate date;
+    private String note;
+
+    public Reminder(LocalDate date, String note) {
+        this.date = date;
+        this.note = note;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    @Override
+    public String toString() {
+        return "📅 " + date + " - " + note;
+    }
+}
+
+public class SimpleCalendarApp {
+    private static ArrayList<Reminder> reminders = new ArrayList<>();
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int choice;
+
+        System.out.println("=== Simple Calendar App ===");
+
+        do {
+            System.out.println("\n--- MENU ---");
+            System.out.println("1. Show Current Date & Time");
+            System.out.println("2. Add Reminder");
+            System.out.println("3. View All Reminders");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    showCurrentDateTime();
+                    break;
+                case 2:
+                    addReminder(sc);
+                    break;
+                case 3:
+                    viewReminders();
+                    break;
+                case 4:
+                    System.out.println("Exiting... Have a great day!");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        } while (choice != 4);
+
+        sc.close();
+    }
+
+    private static void showCurrentDateTime() {
+        LocalDate date = LocalDate.now();
+        LocalTime time = LocalTime.now().withNano(0);
+        DayOfWeek day = date.getDayOfWeek();
+
+        System.out.println("\n Today: " + date + " (" + day + ")");
+        System.out.println("Time: " + time);
+    }
+
+    private static void addReminder(Scanner sc) {
+        System.out.print("Enter date (YYYY-MM-DD): ");
+        String dateInput = sc.nextLine();
+        System.out.print("Enter note: ");
+        String note = sc.nextLine();
+
+        try {
+            LocalDate date = LocalDate.parse(dateInput);
+            reminders.add(new Reminder(date, note));
+            System.out.println("Reminder added successfully!");
+        } catch (Exception e) {
+            System.out.println("Invalid date format! Please use YYYY-MM-DD.");
+        }
+    }
+
+    private static void viewReminders() {
+        if (reminders.isEmpty()) {
+            System.out.println("No reminders found.");
+        } else {
+            System.out.println("\n--- Your Reminders ---");
+            for (Reminder r : reminders) {
+                System.out.println(r);
+            }
+        }
+    }
+}
