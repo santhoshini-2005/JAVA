@@ -1,0 +1,80 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class StopwatchApp extends JFrame implements ActionListener {
+
+    private JLabel timeLabel;
+    private JButton startButton, stopButton, resetButton;
+    private Timer timer;
+    private int elapsedTime = 0; // in milliseconds
+    private boolean running = false;
+
+    public StopwatchApp() {
+        setTitle("Stopwatch Application");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        setResizable(false);
+
+        timeLabel = new JLabel("00:00:000", SwingConstants.CENTER);
+        timeLabel.setFont(new Font("Verdana", Font.BOLD, 30));
+        add(timeLabel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+
+        startButton = new JButton("Start");
+        stopButton = new JButton("Stop");
+        resetButton = new JButton("Reset");
+
+        startButton.addActionListener(this);
+        stopButton.addActionListener(this);
+        resetButton.addActionListener(this);
+
+        buttonPanel.add(startButton);
+        buttonPanel.add(stopButton);
+        buttonPanel.add(resetButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        timer = new Timer(10, e -> {
+            elapsedTime += 10;
+            updateTimeLabel();
+        });
+    }
+
+    private void updateTimeLabel() {
+        int minutes = (elapsedTime / 60000) % 60;
+        int seconds = (elapsedTime / 1000) % 60;
+        int milliseconds = elapsedTime % 1000;
+        String time = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
+        timeLabel.setText(time);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == startButton) {
+            if (!running) {
+                running = true;
+                timer.start();
+            }
+        } else if (e.getSource() == stopButton) {
+            running = false;
+            timer.stop();
+        } else if (e.getSource() == resetButton) {
+            running = false;
+            timer.stop();
+            elapsedTime = 0;
+            updateTimeLabel();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            StopwatchApp stopwatch = new StopwatchApp();
+            stopwatch.setVisible(true);
+        });
+    }
+}
